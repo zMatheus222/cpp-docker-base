@@ -1,0 +1,8 @@
+services:
+  cpp-app:
+    build: .
+    container_name: cpp_app
+    # Define o ponto de entrada padrão do contêiner (pode ser removido se o Dockerfile já definir CMD)
+    ports:
+      - 8083:8083
+    entrypoint: ["/app/cpp-base"]

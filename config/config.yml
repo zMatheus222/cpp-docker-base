@@ -1,0 +1,9 @@
+cfgs:
+  name: "Exemplo"
+  version: "1.0"
+  settings:
+    max_connections: 100
+    timeout: 30
+  features:
+    logging: true
+    caching: false
