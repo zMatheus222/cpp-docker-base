@@ -17,7 +17,7 @@ WORKDIR /app
 COPY . .
 
 # Construa o projeto usando CMake
-RUN cmake . && make -j$(nproc)
+RUN cmake -DSKIP_BUILD_TEST=ON . && make -j$(nproc)
 
 # Exponha a porta 8083
 EXPOSE 8083
