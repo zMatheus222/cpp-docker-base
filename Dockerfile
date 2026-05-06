@@ -1,26 +1,36 @@
-# Escolha uma imagem base com C++ e CMake. Aqui usamos uma imagem oficial do Ubuntu.
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
-# Instale dependências necessárias (g++, cmake, etc.)
-RUN apt update && \
-    apt install -y \
-    g++ \
-    cmake \
+# Dependências do sistema (SFML precisa de libs gráficas mesmo para build)
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    cmake \
     git \
+    ca-certificates \
+    libsqlite3-dev \
+    # SFML: dependências de runtime e build
+    libx11-dev \
+    libxrandr-dev \
+    libxcursor-dev \
+    libxi-dev \
+    libxinerama-dev \
+    libudev-dev \
+    libfreetype-dev \
+    libopenal-dev \
+    libflac-dev \
+    libvorbis-dev \
+    libgl1-mesa-dev \
+    libgles2-mesa-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Crie um diretório para o projeto
 WORKDIR /app
 
-# Copie os arquivos do projeto para o contêiner
+# Copia todo o projeto
 COPY . .
 
-# Construa o projeto usando CMake
-RUN cmake -DSKIP_BUILD_TEST=ON . && make -j$(nproc)
+# Build com CMake (SFML e nlohmann/json via FetchContent)
+RUN cmake -B build \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+    && cmake --build build --parallel "$(nproc)"
 
-# Exponha a porta 8083
-EXPOSE 8083
-
-# Comando para executar o binário gerado
-CMD ["./cpp-base"]
+CMD ["/app/build/GameBase"]

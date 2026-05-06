@@ -1,8 +1,12 @@
 services:
-  cpp-app:
+  game:
     build: .
-    container_name: cpp_app
-    # Define o ponto de entrada padrão do contêiner (pode ser removido se o Dockerfile já definir CMD)
-    ports:
-      - 8083:8083
-    entrypoint: ["/app/cpp-base"]
+    container_name: game_base
+    # SFML precisa de display. X11 forwarding via socket do host.
+    # Antes de rodar: xhost +local:docker
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./database.db:/app/database.db
+    network_mode: host
